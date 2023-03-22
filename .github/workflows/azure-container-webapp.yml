@@ -53,7 +53,7 @@ jobs:
       - name: Log in to GitHub container registry
         uses: docker/login-action@v1.10.0
         with:
-          registry: blueyonder.azurecr.io
+          registry: ${{ secrets.ACR_ENDPOINT }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
@@ -61,11 +61,9 @@ jobs:
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
       - name: Build and push container image to registry
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: blueyonder.azurecr.io/${{ env.AZURE_WEB_APP }}:${{ env.CURRENT_DATE }}
-          file: ./Dockerfile
+        run: |
+          docker build . -t ${{ secrets.ACR_ENDPOINT }}/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.ACR_ENDPOINT }}/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
 
   deploy:
     permissions:
@@ -89,4 +87,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEB_APP_PUBLISH_PROFILE }}
-          images: 'blueyonder.azurecr.io/${{ env.AZURE_WEB_APP }}:${{ env.CURRENT_DATE }}'
+          images: '${{ secrets.ACR_ENDPOINT }}/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}'
