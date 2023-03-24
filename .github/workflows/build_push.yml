@@ -15,6 +15,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: Development
 
     steps:
       - uses: actions/checkout@v3
