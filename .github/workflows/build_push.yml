@@ -35,7 +35,7 @@ jobs:
       - name: Build and push container image to registry
         run: |
           docker build . -t ${{ secrets.ACR_ENDPOINT }}/${{ env.ACR_REPO_NAME }}:${{ github.sha }}
-          docker push ${{ secrets.Development.ACR_ENDPOINT }}/${{ env.ACR_REPO_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.ACR_ENDPOINT }}/${{ env.ACR_REPO_NAME }}:${{ github.sha }}
 
   deploy:
     permissions:
